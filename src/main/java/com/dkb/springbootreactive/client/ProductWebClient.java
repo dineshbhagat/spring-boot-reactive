@@ -10,6 +10,7 @@ import reactor.core.publisher.Flux;
  * Ref: https://www.callicoder.com/spring-5-reactive-webclient-webtestclient-examples/
  */
 @Component
+@Slf4j
 public class ProductWebClient {
 
     public Flux<Product> getAllProducts() {
@@ -24,6 +25,8 @@ public class ProductWebClient {
                 .retrieve()
                 .bodyToFlux(Product.class)
                 .doOnComplete(() -> System.out.println("Completed GET request"))
+                .retryBackoff(3, Duration.ofSeconds(1), Duration.ofSeconds(10))
+                .doOnError(IOException.class, e -> log.error("Webclient error"))
                 .log();
     }
 }
