@@ -1,17 +1,22 @@
 buildscript {
-	ext {
-		springBootVersion = '2.1.0.M4'
-        springBootGradleVersion = '2.0.5.RELEASE'
-	}
-	repositories {
-		mavenCentral()
-        maven { url "https://repository.jboss.org/nexus/content/repositories/releases" }
-		maven { url "https://repo.spring.io/snapshot" }
-		maven { url "https://repo.spring.io/milestone" }
+    ext {
+        springBootVersion = '2.2.0.BUILD-SNAPSHOT'
+        springBootAdminVersion = '2.2.0.BUILD-SNAPSHOT'
+        springBootGradleVersion = '2.2.0.BUILD-SNAPSHOT'
+        junitVersion = '5.4.2'
     }
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootGradleVersion}")
-	}
+    repositories {
+        mavenCentral()
+        maven { url "https://repository.jboss.org/nexus/content/repositories/releases" }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootGradleVersion}")
+    }
+}
+
+plugins {
+    id 'org.springframework.boot' version '2.2.0.BUILD-SNAPSHOT'
+    id 'java'
 }
 
 apply plugin: 'java'
@@ -21,37 +26,60 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'application'
 
-group = 'com.example'
+group = 'com.dkb'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = '12'
+targetCompatibility = '12'
 
-repositories {
-	mavenCentral()
+
+applicationName = "spring-boot-reactive"
+mainClassName = "com.dkb.springbootreactive.SpringBootReactiveApplication"
+
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
-mainClassName = "com.example.DemoApplication"
-
-ext {
-	springBootAdminVersion = '2.0.2'
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.spring.io/snapshot' }
+    maven { url 'https://repo.spring.io/milestone' }
 }
 
 dependencies {
-	compile "org.springframework.boot:spring-boot-starter-webflux"
-    compile('org.springframework.boot:spring-boot-starter-data-mongodb-reactive')
-    
-	compile('org.springframework.boot:spring-boot-starter-actuator')
-	compileOnly('org.projectlombok:lombok')
-    
-	// https://mvnrepository.com/artifact/com.google.guava/guava
-	compile group: 'com.google.guava', name: 'guava', version: '26.0-jre'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+//	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
 
-	testCompile('org.springframework.boot:spring-boot-starter-test')
-	compile('de.codecentric:spring-boot-admin-starter-server')
+    // https://stackoverflow.com/a/48418409/2987755, 
+    // spring-boot-starter-data-rest brings spring-boot-starter-web as a transitive dependency (so basically Spring MVC). 
+    // This makes Spring Boot configure your application as a Spring MVC web application.
+    // Spring Data REST does not currently support Spring WebFlux 
+//	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.data:spring-data-rest-hal-explorer'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+
+    // test libs
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+        exclude group: 'junit', module: 'junit'
+    }
+    testImplementation 'io.projectreactor:reactor-test'
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
+    testCompile("org.junit.jupiter:junit-jupiter-params:${junitVersion}")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+
+    testCompile("junit:junit:4.12")
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:${junitVersion}")
 }
 
-dependencyManagement {
-	imports {
-		mavenBom "de.codecentric:spring-boot-admin-dependencies:${springBootAdminVersion}"
-	}
+test {
+    useJUnitPlatform()
 }
