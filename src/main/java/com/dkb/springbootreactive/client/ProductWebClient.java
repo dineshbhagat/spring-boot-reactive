@@ -28,13 +28,13 @@ public class ProductWebClient {
         
         return webClient
                 .get()
-                .uri("/getAll")
+                .uri("http://localhost:8080/getAll")
 //                .accept(MediaType.TEXT_EVENT_STREAM) //todo on setting this, request does not work, check
                 .retrieve()
                 .bodyToFlux(Product.class)
                 .doOnComplete(() -> System.out.println("Completed GET request"))
                 .retryBackoff(3, Duration.ofSeconds(1), Duration.ofSeconds(10))
-                .doOnError(IOException.class, e -> log.error("Webclient error"))
+                .doOnError(IOException.class, e -> log.error("Webclient error : {}" , e.getMessage()))
                 .log();
     }
 }
