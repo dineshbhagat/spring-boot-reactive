@@ -2,9 +2,13 @@ package com.dkb.springbootreactive.client;
 
 
 import com.dkb.springbootreactive.entity.Product;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
+
+import java.io.IOException;
+import java.time.Duration;
 
 /**
  * Ref: https://www.callicoder.com/spring-5-reactive-webclient-webtestclient-examples/
