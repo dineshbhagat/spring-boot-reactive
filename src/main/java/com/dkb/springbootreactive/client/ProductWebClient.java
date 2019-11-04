@@ -12,12 +12,16 @@ import reactor.core.publisher.Flux;
 @Component
 @Slf4j
 public class ProductWebClient {
+    
+    private WebClient webClient;
 
+    public ProductWebClient(WebClient webClient) {
+        this.webClient = webClient;
+    }
+
+    
     public Flux<Product> getAllProducts() {
-        WebClient webClient = WebClient.builder().baseUrl("http://localhost:8080")
-                //.defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .build();
-
+        
         return webClient
                 .get()
                 .uri("/getAll")
