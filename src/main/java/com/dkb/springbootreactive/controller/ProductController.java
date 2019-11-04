@@ -22,7 +22,7 @@ public class ProductController {
     @Autowired
     ProductWebClient productWebClient;
 
-    @GetMapping(path = "/getAll")
+    @GetMapping(path = "/getAll", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<Product> getAllProducts() {
         Flux<Product> allProducts = productService.getAllProducts();
         return allProducts;
