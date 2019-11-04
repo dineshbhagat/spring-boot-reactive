@@ -1,40 +1,20 @@
-buildscript {
-    ext {
-        springBootVersion = '2.2.0.BUILD-SNAPSHOT'
-        springBootAdminVersion = '2.2.0.BUILD-SNAPSHOT'
-        springBootGradleVersion = '2.2.0.BUILD-SNAPSHOT'
-        junitVersion = '5.4.2'
-    }
-    repositories {
-        mavenCentral()
-        maven { url "https://repository.jboss.org/nexus/content/repositories/releases" }
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootGradleVersion}")
-    }
-}
-
 plugins {
-    id 'org.springframework.boot' version '2.2.0.BUILD-SNAPSHOT'
+    id 'org.springframework.boot' version '2.2.0.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
     id 'java'
+    id 'eclipse'
+    id 'idea'
+    id 'application'
 }
 
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
-apply plugin: 'application'
+ext {
+    junitVersion = "5.3.2"
+}
 
 group = 'com.dkb'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '12'
-targetCompatibility = '12'
-
-
-applicationName = "spring-boot-reactive"
-mainClassName = "com.dkb.springbootreactive.SpringBootReactiveApplication"
-
+sourceCompatibility = '11'
+targetCompatibility = '11'
 
 configurations {
     compileOnly {
@@ -46,7 +26,11 @@ repositories {
     mavenCentral()
     maven { url 'https://repo.spring.io/snapshot' }
     maven { url 'https://repo.spring.io/milestone' }
+    maven { url "https://repository.jboss.org/nexus/content/repositories/releases" }
 }
+
+applicationName = "spring-boot-reactive"
+mainClassName = "com.dkb.springbootreactive.SpringBootReactiveApplication"
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -61,8 +45,9 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.data:spring-data-rest-hal-explorer'
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    compileOnly("org.projectlombok:lombok:1.18.10")
+    annotationProcessor("org.projectlombok:lombok:1.18.10")
 
 
     // test libs
@@ -74,7 +59,7 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testCompile("org.junit.jupiter:junit-jupiter-params:${junitVersion}")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 
     testCompile("junit:junit:4.12")
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:${junitVersion}")
